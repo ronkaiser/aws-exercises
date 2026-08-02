@@ -53,7 +53,7 @@ pipeline{
             steps {
                 script {
                     commitToGit(
-                        'https://github.com/ronkaiser/jenkins-exercises.git',
+                        'https://github.com/ronkaiser/aws-exercises.git',
                         'main',
                         'github-pat-devops-08'
                     )
