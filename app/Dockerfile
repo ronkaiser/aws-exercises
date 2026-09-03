@@ -1,8 +1,12 @@
-FROM amazoncorretto:17-alpine-jdk
+FROM node:24-alpine
 
-EXPOSE 8080
+WORKDIR /usr/src/app
 
-COPY ./target/java-maven-app-*.jar /usr/app/
-WORKDIR /usr/app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-CMD java -jar java-maven-app-*.jar
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
