@@ -27,11 +27,13 @@ pipeline{
         }
         stage("build and push docker image"){
             steps{
-                script {
-                    def imageName = "ronkaiser86/myapp:${env.IMAGE_NAME}"
-                    buildImage(imageName)
-                    dockerLogin()
-                    dockerPush(imageName)
+                dir(env.APP_DIR) {
+                    script {
+                        def imageName = "ronkaiser86/myapp:${env.IMAGE_NAME}"
+                        buildImage(imageName)
+                        dockerLogin()
+                        dockerPush(imageName)
+                    }
                 }
             }
         }
