@@ -1,6 +1,6 @@
 @Library('jenkins-shared-library') _
 
-pipeline{
+pipeline {
     agent any
     tools {
         nodejs 'node'
@@ -8,9 +8,14 @@ pipeline{
     environment {
         APP_DIR = 'app'
     }
-    stages{
+    stages {
         stage("increment version"){
-            steps{
+            when {
+                expression {
+                    return env.BRANCH_NAME == "main"
+                }
+            }
+            steps {
                 script {
                     dir(env.APP_DIR) {
                         incrementversion()
@@ -18,14 +23,19 @@ pipeline{
                 }
             }
         }
-        stage("run tests"){
-            steps{
+        stage("run tests") {
+            steps {
                 dir(env.APP_DIR) {
                     runtests()
                 }
             }
         }
-        stage("build and push docker image"){
+        stage("build and push docker image") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == "main"
+                }
+            }
             steps{
                 dir(env.APP_DIR) {
                     script {
@@ -38,6 +48,11 @@ pipeline{
             }
         }
         stage('deploy to EC2') {
+            when {
+                expression {
+                    return env.BRANCH_NAME == "main"
+                }
+            }
             steps {
                 script {
                    def shellCmd = "bash ./server-cmds.sh ${IMAGE_NAME}"
@@ -52,6 +67,11 @@ pipeline{
             }
         }
         stage("commit to git") {
+            when {
+                expression {
+                    return env.BRANCH_NAME == "main"
+                }
+            }
             steps {
                 script {
                     commitToGit(
